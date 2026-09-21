@@ -1,0 +1,52 @@
+<div class="container py-3">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Notificaciones recibidas</h1>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 fw-normal">Tienes {{notificaciones.length}} notificaciones</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm pointer-rows" id="dataTable" width="100%" cellspacing="0">
+                <tbody>
+                    <tr *ngFor="let item of notificaciones" [routerLink]="[item.idNotificacion]">
+                        <td class="align-middle" style="width: 100px;">
+                          <div class="emisor-circulo mx-auto">{{item.emisor.nombre.charAt(0)}}</div>
+                        </td>
+                        <td class="align-middle text-center" style="width: 50px;">
+                          <div class="favorite-button">
+                            <i class="fa fa-star"></i>
+                          </div>
+                        </td>
+                        <td class="align-middle text-primary" style="width: 200px;">
+                          <div *ngIf="item.emisor" style="width: 200px;white-space: nowrap;
+                          text-overflow: ellipsis; overflow: hidden;"> {{item.emisor.nombre}}</div>
+                        </td>
+                        <td class="align-middle">
+                          {{item.asunto}}
+                        </td>
+                        <td class="align-middle text-center" style="width: 10px;">
+                            <i *ngIf="item.archivos.length > 0"class="fa fa-paperclip"></i>
+                        </td>
+                        <td class="align-middle text-nowrap" style="width: 180px;">
+                          {{item.fecha | date: 'dd/MM/yyyy hh:mm:ss'}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-between py-2 px-4">
+          <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize" size="sm" (pageChange)="listarNotificaciones()">
+          </ngb-pagination>
+          <select class="form-control form-control-sm float-right" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="listarNotificaciones()">
+            <!-- <option [ngValue]="5">Mostrar 5 registros por página</option> -->
+            <option [ngValue]="25">Mostrar 25 registros por página</option>
+            <option [ngValue]="50">Mostrar 50 registros por página</option>
+          </select>
+        </div>
+    </div>
+  </div>
+
+</div>

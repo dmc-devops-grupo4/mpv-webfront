@@ -1,0 +1,57 @@
+.rounded-4 { border-radius: .5rem; }
+.rounded-5 { border-radius: .75rem; }
+.rounded-6 { border-radius: 1rem; }
+.rounded-top-6 { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+
+
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
+}
+
+.text-small {
+  font-size: 85%;
+}
+
+.img-header{
+  height: 50px;
+  padding: 10px 0;
+}
+
+.header{
+  background-color: #dbdbdb;
+}
+
+.title {
+  color: #3D5AA6;
+  font-weight: 500;
+}
+
+.content-registro {
+  max-width: 800px;
+}
+
+.custom-email {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  user-select:none;
+  -o-user-select:none;
+}
+
+.check-terminos {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.check-terminos input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+}
+
+.input-group > .input-group-prepend > .btn, .input-group > .input-group-prepend > .input-group-text, .input-group:not(.has-validation) > .input-group-append:not(:last-child) > .btn, .input-group:not(.has-validation) > .input-group-append:not(:last-child) > .input-group-text, .input-group.has-validation > .input-group-append:nth-last-child(n + 3) > .btn, .input-group.has-validation > .input-group-append:nth-last-child(n + 3) > .input-group-text, .input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {
+  border-top-right-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+}

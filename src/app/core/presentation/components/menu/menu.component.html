@@ -1,0 +1,46 @@
+<div id="layoutSidenav_nav">
+  <nav class="sb-sidenav accordion sb-sidenav-dark small" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+
+        <div class="sb-sidenav-menu-heading">Trámites</div>
+
+        <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+          [routerLink]="['/tramites']">
+          <div class="sb-nav-link-icon"><i class="fa-solid fa-rectangle-list"></i></div> Mis trámites
+        </a>
+        <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+          [routerLink]="['/tramites/nuevo']">
+          <div class="sb-nav-link-icon"><i class="fa-solid fa-plus"></i></div> Nuevo trámite
+        </a>
+
+        <div class="sb-sidenav-menu-heading">Notificaciones</div>
+
+        <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}"
+          [routerLink]="['/casilla']">
+          <div class="sb-nav-link-icon"><i class="fa-solid fa-inbox"></i></div> Casilla electrónica
+        </a>
+
+        <div class="sb-sidenav-menu-heading">Mi cuenta</div>
+
+        <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+          [routerLink]="['/usuario']">
+          <div class="sb-nav-link-icon"><i class="fa-solid fa-user-pen"></i></div> Actualizar datos
+        </a>
+
+      </div>
+    </div>
+
+    <div class="sb-sidenav-footer">
+      <div class="small">
+        <span class="d-block font-weight-normal text-white">Usuario:</span>
+        <span class="d-block">idUsuario : {{this.idUsuario}}</span>
+        <span class="d-block">idPersona : {{this.idPersona}}</span>
+        <span class="d-block">nroDocumento : {{this.nroDocumento}}</span>
+        <span class="d-block">nombre : {{this.nombre}}</span>
+        <!-- <span class="d-inline font-weight-normal text-white">DNI:</span><span> 70765913</span> -->
+      </div>
+
+    </div>
+  </nav>
+</div>

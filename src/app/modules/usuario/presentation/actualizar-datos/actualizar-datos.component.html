@@ -1,0 +1,248 @@
+<div class="container py-3">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Actualizar datos</h1>
+  </div>
+
+  <div class="card shadow p-2 mb-2 rounded">
+    <div class="card-body">
+        <form [formGroup]="form">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Tipo Persona
+                      </label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control form-control-sm" disabled [value]="persona.tipoPersona.descripcion">
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Tipo Documento
+                      </label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control form-control-sm" disabled [value]="persona.tipoDocIdentidad.descripcion">
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Nro. Documento
+                      </label>
+                      <div class="col-md-9">
+                          <input type="text" class="form-control form-control-sm" disabled [value]="persona.nroDocumento">
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Nombre
+                      </label>
+                      <div class="col-md-9">
+                          <input type="text" class="form-control form-control-sm" disabled [value]="persona.nombres + ' ' + persona.apellidoPaterno + ' ' + persona.apellidoPaterno">
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+
+
+
+
+                <div class="row" *ngIf="persona.tipoPersona.idTipoPersona === 1">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        R.U.C.
+                      </label>
+                      <div class="col-md-9">
+                          <input type="text" class="form-control form-control-sm" disabled [value]="persona.ruc">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Dirección <span class="text-danger">*</span>
+                      </label>
+                      <div class="col-md-9">
+                          <input type="text" class="form-control form-control-sm" formControlName="direccion"
+                              [class.is-invalid]="this.formInvalid('direccion')">
+                          <div *ngIf="form.get('direccion').hasError('required')" class="invalid-feedback">
+                              Este campo es obligatorio
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Departamento <span class="text-danger">*</span>
+                      </label>
+                      <div class="col-md-9">
+                        <select class="form-select form-select-sm" formControlName="departamento" #selectDepartamento
+                            [class.is-invalid]="this.formInvalid('departamento')"
+                            (change)="onChangeDepartamento(selectDepartamento.value)">
+                            <option value="">Seleccionar...</option>
+                            <option *ngFor="let item of listaDepartamentos;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                        </select>
+                        <div *ngIf="form.get('departamento').hasError('required')" class="invalid-feedback">
+                          Este campo es obligatorio
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Provincia <span class="text-danger">*</span>
+                      </label>
+                      <div class="col-md-9">
+                        <select class="form-select form-select-sm" formControlName="provincia" #selectProvincia
+                        [class.is-invalid]="this.formInvalid('provincia')"
+                        (change)="onChangeProvincia(selectDepartamento.value, selectProvincia.value)">
+                        <option value="">Seleccionar...</option>
+                        <option *ngFor="let item of listaProvincias;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                    </select>
+                        <div *ngIf="form.get('provincia').hasError('required')" class="invalid-feedback">
+                          Este campo es obligatorio
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        Distrito <span class="text-danger">*</span></label>
+                      <div class="col-md-9">
+                        <select class="form-select form-select-sm" formControlName="distrito"
+                        [class.is-invalid]="this.formInvalid('distrito')">
+                        <option value="">Seleccionar...</option>
+                        <option *ngFor="let item of listaDistritos;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                    </select>
+                          <div *ngIf="form.get('distrito').hasError('required')" class="invalid-feedback">
+                            Este campo es obligatorio
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              <div class="row">
+                <div class="col-xl-12">
+                  <div class="form-group row mb-2">
+                    <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                      Celular <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control form-control-sm" formControlName="celular"
+                            [class.is-invalid]="this.formInvalid('celular')">
+                        <div *ngIf="form.get('celular').hasError('required')" class="invalid-feedback">
+                            Este campo es obligatorio
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12">
+                  <div class="form-group row mb-2">
+                    <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                      Correo electrónico <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="email" class="form-control form-control-sm" formControlName="correo"
+                            [class.is-invalid]="this.formInvalid('correo')">
+                        <div *ngIf="form.get('correo').hasError('required')" class="invalid-feedback">
+                            Este campo es obligatorio
+                        </div>
+                        <div *ngIf="form.get('correo').hasError('emailInvalid')" class="invalid-feedback">
+                            Ingrese un correo electrónico válido
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <section *ngIf="persona.tipoPersona.idTipoPersona === 2">
+                <div class="row">
+                  <div class="col-xl-12">
+                    <span class="text-primary">Datos de la empresa:</span>
+                    <hr class="mt-1">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                      <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                          Razon Social
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control form-control-sm" disabled [value]="persona.razonSocial">
+                        </div>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-12">
+                    <div class="form-group row mb-2">
+                      <label class="col-sm-3 col-form-label col-form-label-sm text-right">
+                        R.U.C.
+                      </label>
+                      <div class="col-md-9">
+                          <input type="text" class="form-control form-control-sm" disabled [value]="persona.ruc">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </section>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary mt-2 mb-2"
+                  [disabled]="!this.form.valid"
+                  (click)="guardar()"> Guardar cambios
+                </button>
+            </div>
+          </div>
+
+        </form>
+    </div>
+  </div>
+</div>

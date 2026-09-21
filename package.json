@@ -1,0 +1,81 @@
+{
+  "name": "proyecto-mpv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mesa de Partes Virtual",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "start:dev": "ng serve --c=dev",
+    "start:max": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve",
+    "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
+    "build": "ng build",
+    "build:dev": "ng build --c=dev",
+    "build:qa": "ng build --c=qa",
+    "build:prod": "ng build --prod",
+    "test": "ng test",
+    "test-coverage": "ng test --code-coverage",
+    "lint": "ng lint",
+    "format": "prettier --write \"src/**/*.{js,ts,json,css,scss,md}\"",
+    "e2e": "ng e2e"
+  },
+  "dependencies": {
+    "@angular-devkit/schematics": "^17.3.8",
+    "@angular/animations": "^17.3.8",
+    "@angular/common": "^17.3.8",
+    "@angular/compiler": "^17.3.8",
+    "@angular/core": "^17.3.8",
+    "@angular/forms": "^17.3.8",
+    "@angular/localize": "^17.3.8",
+    "@angular/platform-browser": "^17.3.8",
+    "@angular/platform-browser-dynamic": "^17.3.8",
+    "@angular/router": "^17.3.8",
+    "@fortawesome/fontawesome-free": "^6.2.0",
+    "@ng-bootstrap/ng-bootstrap": "^16.0.0",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.2",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
+    "ngx-spinner": "^16.0.2",
+    "rxjs": "^7.8.1",
+    "sweetalert2": "^11.10.5",
+    "tslib": "^2.6.2",
+    "zone.js": "~0.14.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.8",
+    "@angular-eslint/builder": "^17.3.8",
+    "@angular-eslint/eslint-plugin": "^17.3.8",
+    "@angular-eslint/eslint-plugin-template": "^17.3.8",
+    "@angular-eslint/schematics": "^17.3.8",
+    "@angular-eslint/template-parser": "^17.3.8",
+    "@angular/cli": "^17.3.8",
+    "@angular/compiler-cli": "^17.3.8",
+    "@types/jasmine": "^5.1.4",
+    "@types/lodash": "^4.14.202",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "jasmine-core": "^5.1.2",
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.3.3"
+  },
+  "resolutions": {
+    "minimist": "^1.2.6"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  }
+}

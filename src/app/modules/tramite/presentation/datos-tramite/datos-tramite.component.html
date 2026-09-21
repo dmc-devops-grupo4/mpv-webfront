@@ -1,0 +1,121 @@
+<div class="container py-3">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-1 text-gray-800">Detalle de trámite</h1>
+  </div>
+
+  <div class="card shadow">
+
+    <div class="card-header bg-white">
+      <h6 class="fw-semibold m-0">Datos generales</h6>
+    </div>
+
+    <div class="card-body">
+
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="row">
+            <label class="col-sm-4 fw-semibold mb-1">Nro. Solicitud:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.idTramite }}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Fecha de solicitud:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.fecha | date:'dd/MM/yyyy hh:mm:ss'}}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Tipo de documento:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.tipoDocumento.nombre }}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Nro Documento:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.nroDocumento }}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Asunto:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.asunto }}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Observacion:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.observacion }}</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+
+            <label class="col-sm-4 fw-semibold mb-1">Oficina:</label>
+            <div class="col-sm-8">
+              <span >{{ tramite.oficina.nombre }}</span>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Remitente:</label>
+            <div class="col-sm-8">
+              <span>{{ tramite.usuario.nombres }} {{ tramite.usuario.apellidoPaterno }} {{ tramite.usuario.apellidoMaterno }}</span><br>
+              <small>{{ tramite.nroDocumento}}</small><br>
+            </div>
+
+            <label class="col-sm-4 fw-semibold mb-1">Estado:</label>
+            <div class="col-sm-8">
+              <span *ngIf="tramite.estado == 1" class="fw-semibold text-secondary">{{ tramite.estadoString }}</span>
+              <span *ngIf="tramite.estado == 2" class="fw-semibold text-success">{{ tramite.estadoString }}</span>
+              <span *ngIf="tramite.estado == 3" class="fw-semibold text-danger">{{ tramite.estadoString }}</span>
+            </div>
+          </div>
+
+          @if (tramite.estado == 3) {
+            <div class="row pe-4">
+              <div class="alert alert-danger">
+                <span class="fw-semibold">MOTIVO DE RECHAZO: </span>
+                <br>
+                {{ tramite.motivoRechazo }}
+              </div>
+            </div>
+          }
+
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <div class="card-header bg-white">
+      <h6 class="fw-semibold m-0">Documentos adjuntos</h6>
+    </div>
+
+    <div class="card-body p-0">
+
+      <div class="list-group list-group-flush">
+        <div *ngFor="let item of tramite.tramiteArchivos"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer;"
+          (click)="verDocumento(item.idArchivo, item.nombreArchivo)">
+          <span class="list-group-item-action ">
+            <i class="fa fa-file text-danger"></i>
+            {{ item.nombreArchivo }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-footer bg-white">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="d-flex justify-content-end">
+              <a class="btn btn-secondary ml-1" [routerLink]="['/tramites']"><i class="fa fa-arrow-left"></i> Volver</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+

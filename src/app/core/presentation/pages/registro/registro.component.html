@@ -1,0 +1,351 @@
+<div style="background-color: #eaeaea; min-height: 100vh;">
+    <header>
+        <div class="px-3 py-2 text-white header">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <a href="/"
+                        class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                        <img class="img-header" src="assets/img/logo.png" alt="logo">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+          <div class="col-lg-9 col-md" style="max-width: 800px;">
+
+              <div class="card shadow rounded-6 mt-3 mb-4">
+                <div class="card-header rounded-top-6">
+                  <h5 class="title text-center my-2"><i class="fa fa-user"></i> Registro de usuario</h5>
+                </div>
+                  <div class="card-body py-4 px-5">
+                      <form [formGroup]="form">
+
+                          <div class="fw-semibold text-center">Ingrese sus datos según corresponda</div>
+
+                          <section id="datosTipoPersona" class="form-row mt-2">
+                              <div class="col-md-12">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Tipo de Persona <span
+                                              class="text-danger">*</span></label>
+                                      <select class="form-select form-select-sm" #selectTipoContribuyente
+                                          [class.is-invalid]="this.formInvalid('idTipoPersona')"
+                                          (change)="onChangeTipoPersona(selectTipoContribuyente.value)"
+                                          formControlName="idTipoPersona">
+                                          <option [value]="TIPO_PERSONA.PERSONA_NATURAL" selected>PERSONA NATURAL</option>
+                                          <option [value]="TIPO_PERSONA.PERSONA_JURIDICA">PERSONA JURÍDICA</option>
+                                      </select>
+                                      <div *ngIf="form.get('idTipoPersona').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+                          </section>
+
+                          <section *ngIf="form.controls['idTipoPersona'].value == TIPO_PERSONA.PERSONA_JURIDICA" class="form-row mt-3">
+                              <div class="col-md-12">
+                                  <span class="text-danger text-small fw-semibold mb-2">DATOS DE LA EMPRESA</span>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">R.U.C. <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm" formControlName="ruc"
+                                        (keypress)="soloNumeros($event);"
+                                        [class.is-invalid]="this.formInvalid('ruc')" maxlength="11">
+                                      <div *ngIf="form.get('ruc').hasError('required')" class="invalid-feedback">
+                                        Debe ingresar el número de RUC
+                                      </div>
+                                      <div *ngIf="form.get('ruc').errors?.rucPJInvalid" class="invalid-feedback">
+                                        El RUC debe empezar con 20
+                                      </div>
+                                      <div *ngIf="form.get('ruc').errors?.exactLength" class="invalid-feedback">
+                                        Ingrese {{ form.get("ruc").errors?.exactLength?.requiredLength}} caracteres
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-12">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Razón Social <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm" formControlName="razonSocial"
+                                          [class.is-invalid]="this.formInvalid('razonSocial')">
+                                      <div *ngIf="form.get('razonSocial').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                          </section>
+
+                          <section class="row mt-3">
+                              <div class="col-md-12">
+                                  <span class="text-danger text-small fw-semibold">DATOS DEL REPRESENTANTE</span>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Tipo de Documento <span class="text-danger">*</span></label>
+                                      <select class="form-select form-select-sm" formControlName="idTipoDocIdentidad"
+                                          [class.is-invalid]="this.formInvalid('idTipoDocIdentidad')"
+                                          (change)="onChangeTipoDocIdentidad($event)">
+                                          <option *ngFor="let item of listaTiposDocIdentidad;" [value]="item.idTipoDocIdentidad">{{ item.descripcion }}</option>
+                                      </select>
+                                      <div *ngIf="form.get('idTipoDocIdentidad').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6" *ngIf="form.controls['idTipoPersona'].value == TIPO_PERSONA.PERSONA_NATURAL"></div>
+
+                              <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-small mb-1">Nro. de Documento <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" formControlName="nroDocumento"
+                                      [maxlength]="maxLengthNroDocumento"
+                                      (keypress)="soloNumeros($event);"
+                                      [class.is-invalid]="this.formInvalid('nroDocumento')">
+                                    <div *ngIf="form.get('nroDocumento').hasError('required')" class="invalid-feedback">
+                                      Este campo es obligatorio
+                                    </div>
+                                    <div *ngIf="form.get('nroDocumento').errors?.hasNumbersOnly" class="invalid-feedback">
+                                      Ingrese sólo caracteres numéricos
+                                    </div>
+                                    <div *ngIf="form.get('nroDocumento').errors?.exactLength" class="invalid-feedback">
+                                      Ingrese {{ form.get("nroDocumento").errors?.exactLength?.requiredLength}} caracteres
+                                    </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6" *ngIf="form.controls['idTipoPersona'].value == TIPO_PERSONA.PERSONA_NATURAL">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">R.U.C. <span class="text-danger">(opcional)</span></label>
+                                      <input type="text" class="form-control form-control-sm" formControlName="ruc" maxlength="11"
+                                        (keypress)="soloNumeros($event)"
+                                        [class.is-invalid]="this.formInvalid('ruc')">
+                                      <div *ngIf="form.get('ruc').errors?.rucPNInvalid" class="invalid-feedback">
+                                          El RUC debe empezar con 10
+                                      </div>
+                                      <div *ngIf="form.get('ruc').errors?.exactLength" class="invalid-feedback">
+                                        Ingrese {{ form.get("ruc").errors?.exactLength?.requiredLength}} caracteres
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-12">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Nombres <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm text-uppercase" required formControlName="nombres"
+                                          [class.is-invalid]="this.formInvalid('nombres')">
+                                      <div *ngIf="form.get('nombres').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Apellido paterno <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm text-uppercase" formControlName="apellidoPaterno"
+                                          [class.is-invalid]="this.formInvalid('apellidoPaterno')">
+                                      <div *ngIf="form.get('apellidoPaterno').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Apellido materno <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm text-uppercase" formControlName="apellidoMaterno"
+                                          [class.is-invalid]="this.formInvalid('apellidoMaterno')">
+                                      <div *ngIf="form.get('apellidoMaterno').hasError('required')" class="invalid-feedback">
+                                        Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="mb-2">
+                                  <label class="fw-semibold text-small mb-1">Dirección <span class="text-danger">*</span></label>
+                                  <input type="text" class="form-control form-control-sm text-uppercase" formControlName="direccion"
+                                      [class.is-invalid]="this.formInvalid('direccion')" maxlength="200">
+                                  <div *ngIf="form.get('direccion').hasError('required')" class="invalid-feedback">
+                                      Este campo es obligatorio
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Departamento <span class="text-danger">*</span></label>
+                                      <select class="form-select form-select-sm" formControlName="departamento" #selectDepartamento
+                                          [class.is-invalid]="this.formInvalid('departamento')"
+                                          (change)="onChangeDepartamento(selectDepartamento.value)">
+                                          <option value="">Seleccionar...</option>
+                                          <option *ngFor="let item of listaDepartamentos;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                                      </select>
+                                      <div *ngIf="form.get('departamento').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Provincia <span class="text-danger">*</span></label>
+                                      <select class="form-select form-select-sm" formControlName="provincia" #selectProvincia
+                                          [class.is-invalid]="this.formInvalid('provincia')"
+                                          (change)="onChangeProvincia(selectDepartamento.value, selectProvincia.value)">
+                                          <option value="">Seleccionar...</option>
+                                          <option *ngFor="let item of listaProvincias;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                                      </select>
+                                      <div *ngIf="form.get('provincia').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Distrito <span class="text-danger">*</span></label>
+                                      <select class="form-select form-select-sm" formControlName="distrito"
+                                          [class.is-invalid]="this.formInvalid('distrito')">
+                                          <option value="">Seleccionar...</option>
+                                          <option *ngFor="let item of listaDistritos;" [value]="item.codigo">{{ item.nombre | uppercase }}</option>
+                                      </select>
+                                      <div *ngIf="form.get('distrito').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Celular <span class="text-danger">*</span></label>
+                                      <input type="text" class="form-control form-control-sm text-uppercase" formControlName="celular"
+                                          [class.is-invalid]="this.formInvalid('celular')" maxlength="25">
+                                      <div *ngIf="form.get('celular').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Correo electrónico <span class="text-danger">*</span></label>
+                                      <input type="email" class="form-control form-control-sm text-uppercase" formControlName="correo"
+                                          [class.is-invalid]="this.formInvalid('correo')" maxlength="100">
+                                      <div *ngIf="form.get('correo').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                      <div *ngIf="form.get('correo').hasError('emailInvalid')" class="invalid-feedback">
+                                          Ingrese un correo electrónico válido
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Confirmar correo electrónico <span class="text-danger">*</span></label>
+                                      <input type="email" class="form-control form-control-sm text-uppercase custom-email" formControlName="confirmarCorreo"
+                                          [class.is-invalid]="this.formInvalid('confirmarCorreo')" maxlength="100">
+                                      <div *ngIf="form.get('confirmarCorreo').hasError('required')" class="invalid-feedback">
+                                          Este campo es obligatorio
+                                      </div>
+                                      <div *ngIf="form.get('confirmarCorreo').hasError('notMatch')" class="invalid-feedback">
+                                          El email no coincide con el anterior
+                                      </div>
+                                  </div>
+                              </div>
+
+                          </section>
+
+                          <section id="datosUsuario" class="form-row mt-3">
+                              <div class="col-md-12">
+                                  <span class="text-danger text-small fw-semibold">INGRESE UNA CONTRASEÑA</span>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Contraseña <span class="text-danger">*</span></label>
+                                      <div class="input-group">
+                                        <span class="input-group-text px-2"><i class="fa fa-lock"></i></span>
+                                        <input type="password" class="form-control form-control-sm" formControlName="password"
+                                        [class.is-invalid]="this.formInvalid('password')" maxlength="50">
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2 ml-2 pt-3">
+                                    <input class="form-control form-control-sm is-invalid" type="hidden" *ngIf="this.formInvalid('password')" maxlength="50">
+                                    <div *ngIf="form.get('password').errors?.required" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
+                                    </div>
+                                    <div *ngIf="form.get('password').errors?.minlength" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Ingrese al menos 10 caracteres
+                                    </div>
+                                    <div *ngIf="form.get('password').errors?.invalidHasNumber" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Ingrese al menos 1 número
+                                    </div>
+                                    <div *ngIf="form.get('password').errors?.invalidHasCapitalCase" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Ingrese al menos 1 letra mayúscula
+                                    </div>
+                                    <div *ngIf="form.get('password').errors?.invalidHasSmallCase" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Ingrese al menos 1 letra minúscula
+                                    </div>
+                                    <div *ngIf="form.get('password').errors?.invalidHasSpecialCharacters" class="invalid-feedback">
+                                      <i class="fas fa-exclamation-circle"></i> Ingrese al menos 1 caracter especial
+                                    </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <div class="mb-2">
+                                      <label class="fw-semibold text-small mb-1">Confirmar contraseña <span class="text-danger">*</span></label>
+                                      <div class="input-group">
+                                        <span class="input-group-text px-2"><i class="fa fa-lock"></i></span>
+                                        <input type="password" class="form-control form-control-sm" formControlName="confirmarPassword"
+                                            [class.is-invalid]="this.formInvalid('confirmarPassword')">
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="mb-2 ml-2 pt-3">
+                                  <input class="form-control form-control-sm is-invalid" type="hidden" *ngIf="this.formInvalid('confirmarPassword')">
+                                  <div *ngIf="form.get('confirmarPassword').errors?.required" class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
+                                  </div>
+                                  <div *ngIf="form.get('confirmarPassword').errors?.notMatch" class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> El password no coincide con el anterior
+                                  </div>
+                                </div>
+                              </div>
+
+                          </section>
+
+                          <div class="row justify-content-center">
+                              <div class="col-md-4">
+                                  <button type="button" class="btn btn-primary w-100 mb-2"
+                                      (click)="registrar()">Registrarme</button>
+                              </div>
+                          </div>
+                          <hr class="my-4">
+
+                          <div class="row justify-content-end">
+                              <div class="col-auto">
+                                  <a class="btn btn-outline-secondary btn-sm w-100 mb-2" [routerLink]="['/auth/login']">
+                                      <i class="fa fa-arrow-left"></i> Volver al Login
+                                  </a>
+                              </div>
+                          </div>
+
+                      </form>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+    </div>
+</div>

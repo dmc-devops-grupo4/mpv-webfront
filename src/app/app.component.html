@@ -1,0 +1,24 @@
+<body class="sb-nav-fixed">
+    <app-header *ngIf="!config.layout.hidden"></app-header>
+    <div id="{{!config.layout.hidden ? 'layoutSidenav':''}}">
+        <app-menu *ngIf="!config.layout.hidden"></app-menu>
+        <div id="layoutSidenav_content">
+            <main class="bg-light">
+              <!-- <div *ngIf="!isProduction" class="alert alert-warning fw-bold rounded-0 text-center py-2 m-0">
+                <i class="fa fa-info-circle"></i> Estas usando el ambiente de desarrollo
+              </div> -->
+              <router-outlet></router-outlet>
+            </main>
+            <app-footer *ngIf="!config.layout.hidden"></app-footer>
+        </div>
+    </div>
+</body>
+
+<ngx-spinner name="loading"
+  bdColor="rgba(0, 0, 0, 0.4)"
+  size="default"
+  color="#fff"
+  type="ball-spin-clockwise"
+  [fullScreen]="true">
+  <p class="custom-spinner-text"> {{ SpinnerText }} </p>
+</ngx-spinner>

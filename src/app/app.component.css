@@ -1,0 +1,28 @@
+#layoutSidenav_content main {
+  height: 100%;
+}
+
+.color-danger {
+  color: #dc3545;
+}
+
+.color-dark {
+  color: #212529;
+}
+
+.label-bold {
+  font-weight: 700;
+}
+
+.label-small {
+  font-size: 14px;
+}
+
+.custom-spinner-text {
+  position: absolute;
+  font-size: 14px;
+  color: white;
+  top: -50px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}

@@ -1,0 +1,109 @@
+<div class="container py-3">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Mis trámites</h1>
+    <button type="button" class="btn btn-sm btn-success ml-2 shadow-sm" [routerLink]="['nuevo']">
+      <i class="fa fa-plus"></i> Nuevo trámite
+    </button>
+  </div>
+
+  <div class="card shadow mb-4 rounded">
+    <div class="card-body p-4">
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="mb-1">Fecha inicial</label>
+            <input type="date" class="form-control form-control-sm" formControlName="fechaIni">
+          </div>
+
+          <div class="col-md-3">
+            <label class="mb-1">Fecha final</label>
+            <input type="date" class="form-control form-control-sm" formControlName="fechaFin">
+          </div>
+
+          <div class="col-md-3">
+            <label class="mb-1">Estado</label>
+            <select class="form-control form-control-sm" formControlName="estado">
+              <option value="">- Todos -</option>
+              <option value="1">Solicitado</option>
+              <option value="2">Aceptado</option>
+              <option value="3">Rechazado</option>
+            </select>
+          </div>
+
+          <div class="col-md">
+            <label class="mb-1">Asunto</label>
+            <input type="text" class="form-control form-control-sm" formControlName="asunto">
+          </div>
+        </div>
+      </form>
+
+      <div class="form-row mt-3">
+            <button type="button" class="btn btn-sm btn-primary me-2" (click)="buscarTramites()">
+              <i class="fa fa-search"></i> Buscar
+            </button>
+            <button type="button" class="btn btn-sm btn-secondary me-2" (click)="limpiar()">
+              <i class="fa fa-eraser"></i> Limpiar
+            </button>
+      </div>
+
+      <div class="card-body table-responsive p-0 mt-4">
+
+        <table class="table table-sm table-bordered text-dark m-0">
+          <thead class="text-white" style="background-color: steelblue;">
+            <tr>
+              <th scope="col" class="px-2 text-center">#</th>
+              <th scope="col" class="px-2 text-center">N° Solicitud</th>
+              <th scope="col" class="px-2 text-center">F. Emisión</th>
+              <th scope="col" class="px-2 text-center">Tipo Doc.</th>
+              <th scope="col" class="px-2 text-center">Documento / Asunto</th>
+              <th scope="col" class="px-2 text-center"><i class="fas fa-paperclip"></i></th>
+              <th scope="col" class="px-2 text-center">Estado</th>
+              <th scope="col" class="px-2 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tramite of tramites; let i = index">
+              <td class="px-2 text-center font-weight-bold" style="width: 35px;">{{ i + 1 }}</td>
+              <td class="px-2 text-center text-nowrap">{{ tramite.idTramite }}</td>
+              <td class="px-2 text-center">{{ tramite.fecha | date:'dd/MM/yyyy' }}</td>
+              <td class="px-2 text-center">{{ tramite.tipoDocumento.nombre }}</td>
+              <td class="px-2 text-left">
+                <span style="font-weight: 600; color:steelblue;">{{ tramite.nroDocumento }}</span><br>
+                <span class="small">{{tramite.asunto}}</span>
+              </td>
+              <td class="px-2 text-center">{{ tramite.tramiteArchivos.length }}</td>
+              <td class="px-2 text-center text-xs font-weight-bold">
+                <div *ngIf="tramite.estado == 1" class="m-0 fw-semibold text-secondary">{{ tramite.estadoString }}</div>
+                <div *ngIf="tramite.estado == 2" class="m-0 fw-semibold text-success">{{ tramite.estadoString }}</div>
+                <div *ngIf="tramite.estado == 3" class="m-0 fw-semibold text-danger">{{ tramite.estadoString }}</div>
+              </td>
+              <td class="px-2 text-center text-nowrap">
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill" [routerLink]="[tramite.idTramite]">
+                  Ver detalle
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between mt-3">
+          <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize" size="sm" (pageChange)="buscarTramites()">
+          </ngb-pagination>
+
+          <select class="form-control form-control-sm float-right" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="buscarTramites()">
+            <option [ngValue]="5">Mostrar 5 registros por página</option>
+            <option [ngValue]="10">Mostrar 10 registros por página</option>
+            <option [ngValue]="20">Mostrar 20 registros por página</option>
+          </select>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+

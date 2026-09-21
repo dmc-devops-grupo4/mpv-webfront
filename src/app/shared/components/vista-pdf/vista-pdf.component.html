@@ -1,0 +1,9 @@
+<div class="modal-header bg-danger text-white">
+  <h6 class="modal-title">{{ titleModal }}</h6>
+</div>
+<div class="modal-body d-flex p-2">
+  <iframe class="border-0 flex-1 contenedor-pdf" [src]="pdfUrl"></iframe>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-sm btn-secondary" (click)="activeModal.close('Close click')">Cerrar</button>
+</div>

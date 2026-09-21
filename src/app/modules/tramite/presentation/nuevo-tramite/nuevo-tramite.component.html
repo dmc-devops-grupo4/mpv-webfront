@@ -1,0 +1,108 @@
+<div class="container py-3">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Nuevo trámite</h1>
+  </div>
+
+  <form [formGroup]="form">
+      <div class="card shadow p-2 mb-4 rounded">
+        <div class="card-body">
+          <div class="row">
+
+            <div class="col-md-12">
+              <h5>Datos de la solicitud:</h5>
+            </div>
+
+            <div class="col-md-5">
+              <div class="mb-3">
+                  <label class="text-muted mb-1">Oficina destino <span class="text-danger">*</span></label>
+                  <select class="form-select form-select-sm" formControlName="idOficina" [class.is-invalid]="this.formInvalid('idOficina')">
+                      <option value=""> Seleccionar...</option>
+                      <option *ngFor="let item of listaOficinas;" [value]="item.idOficina">{{ item.nombre }}</option>
+                  </select>
+              </div>
+            </div>
+
+            <div class="col-md-7"></div>
+
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="text-muted mb-1">Tipo de documento <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-sm" formControlName="idTipoDocumento" [class.is-invalid]="this.formInvalid('idTipoDocumento')">
+                        <option value=""> Seleccionar...</option>
+                        <option *ngFor="let item of listaTiposDocumento;" [value]="item.idTipoDocumento">{{ item.nombre }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="text-muted mb-1">N° Documento <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control form-control-sm" formControlName="nroDocumento" maxlength="150"
+                    [class.is-invalid]="this.formInvalid('nroDocumento')">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="text-muted mb-1">Asunto <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control form-control-sm text-uppercase" maxlength="500"
+                      formControlName="asunto" [class.is-invalid]="this.formInvalid('asunto')">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="text-muted mb-1">Observación <span class="text-danger">*</span></label>
+                    <textarea class="form-control form-control-sm text-uppercase" maxlength="500"
+                    formControlName="observacion"  [class.is-invalid]="this.formInvalid('observacion')" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- <div class="col-md-12">
+              <h5 class="mt-2">Archivos:</h5>
+            </div> -->
+
+            <div class="col-md-3">
+                <label class="col-form-label text-muted fw-semibold">Archivos adjuntos: <span class="text-danger">*</span></label>
+            </div>
+
+            <div class="col-md-9">
+                <!-- <button type="button" class="btn btn-outline-primary mb-2" (click)="inputFilePdf.click()"
+                    [disabled]="listaDocumentos.length > 0">
+                    Seleccionar PDF
+                </button> -->
+                <button type="button" class="btn btn-outline-primary mb-2" (click)="inputFilePdf.click()">
+                    Seleccionar PDF
+                </button>
+                <input type="file" class="d-none" #inputFilePdf accept="application/pdf" (change)="onChangeInputPdf($event)">
+
+                <div class="mb-2" *ngFor="let item of listaDocumentos; let i = index">
+                    <div class="input-group mb-0">
+
+                        <input type="text" readonly class="form-control" aria-label="Archivo PDF" [value]="item.nombre">
+                          <span class="input-group-text">{{ formatBytes(item.tamanio) }}</span>
+                          <button class="btn btn-outline-secondary" type="button" style="color: gray;"
+                            (click)="verDocumento(item.idArchivo, item.nombre)"><i class="fa fa-file-pdf"></i>
+                          </button>
+                          <button class="btn btn-outline-secondary" type="button" (click)="eliminarPdf(i)"><i class="fa"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end mt-3">
+              <div class="d-flex justify-content-end">
+                  <button class="btn btn-primary" (click)="enviar()">
+                    <i class="fas fa-paper-plane"></i> Enviar solicitud
+                  </button>
+                  <a class="btn btn-light ml-1" [routerLink]="['/tramites']">
+                    <i class="fa fa-arrow-left"></i> Salir
+                  </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+  </form>
+
+</div>

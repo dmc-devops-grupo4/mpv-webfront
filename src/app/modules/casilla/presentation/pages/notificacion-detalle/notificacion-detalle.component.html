@@ -1,0 +1,58 @@
+
+<div class="container py-3">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-secondary mb-4">
+
+        <div class="card-header">
+          <h6 class="m-0 font-weight-bold ">Detalle de notificacion</h6>
+        </div>
+
+        <div class="card-body">
+          <div class="mailbox-read-info">
+            <div class="float-right">
+              <span class="mailbox-read-time">{{notificacion.fecha | date:'EEEE, d MMMM y, h:mm:ss a'}}</span>
+            </div>
+            <h4>{{notificacion.asunto}}</h4>
+            <h6>
+              <strong>De: </strong>
+              <span >{{notificacion.emisor.descripcion | uppercase}}&nbsp;</span>
+              <span> - {{notificacion.emisor.nombre | uppercase}}</span>
+            </h6>
+            <h6>
+              <strong>Para: </strong>
+              {{ notificacion.destinatario.nombreCompleto }}
+            </h6>
+          </div>
+          <hr>
+          <div class="mailbox-read-message">
+            <div [innerHTML]="notificacion.contenido"></div>
+          </div>
+        </div>
+
+        @if (notificacion.archivos && notificacion.archivos.length > 0) {
+          <div class="card-footer bg-white">
+            <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+              <li *ngFor="let item of notificacion.archivos" class="border mx-1">
+                <span class="mailbox-attachment-icon">
+                  <i class="far fa-file-pdf"></i>
+                </span>
+                <div class="mailbox-attachment-info">
+                  <a type="button" class="mailbox-attachment-name" title="{{item.nombre}}" (click)="verDocumento(item.ruta)">
+                    <div style="max-width:150px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                      <i class="fas fa-paperclip"></i>
+                      {{item.nombre}}
+                    </div>
+                  </a>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+
+</div>

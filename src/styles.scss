@@ -1,0 +1,39 @@
+@import "../src/app/core/presentation/scss/styles.scss";
+
+/* You can add global styles to this file, and also import other style files */
+// body {
+//   height: 100vh;
+//   color: #5a5c69;
+//   /* background-color: #e9ecef; */
+// }
+
+
+
+select.select-placeholder option:first-child {
+  color: #6c757d; /* Cambia el color según tus preferencias */
+}
+
+.table-striped tbody tr:nth-child(even) {
+  background-color: white; /* Cambia este valor al color que prefieras */
+}
+
+
+.swal2-title {
+  font-size: 1.5em !important;
+}
+
+.sb-sidenav-dark .sb-sidenav-menu .nav-link.active {
+  color: #fff;
+  background-color: #343a40;
+  border-radius: 10px 0 0 10px;
+}
+
+// /* Importing Bootstrap SCSS file. */
+// @import 'bootstrap/scss/bootstrap';
+
+
+// /* FONDO PARA LOS TITULOS DEL ACORDEON */
+// form [ngbAccordion] [ngbAccordionButton] {
+//   background-color: #BF0909;
+//   color: white;
+// }
