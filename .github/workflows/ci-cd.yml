@@ -1,0 +1,246 @@
+# CI/CD mpv-webfront: build -> ACR -> dev -> stg -> prd
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  APP_NAME: mpv-webfront
+  # Variables PROJECT / INSTANCE (por defecto mdpv / 001)
+  PROJECT: ${{ vars.PROJECT || 'mdpv' }}
+  INSTANCE: ${{ vars.INSTANCE || '001' }}
+  # La imagen se construye en el ACR de dev
+  ACR_BUILD: acr${{ vars.PROJECT || 'mdpv' }}deveastus2${{ vars.INSTANCE || '001' }}
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.short.outputs.short_sha }}
+
+    steps:
+      - name: Obtener código fuente
+        uses: actions/checkout@v4
+
+      - name: Obtener SHA corto
+        id: short
+        run: echo "short_sha=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build de Angular
+        # Tests omitidos: Karma requiere navegador
+        run: npm run build
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Docker Login to ACR
+        run: az acr login --name $ACR_BUILD
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME=$ACR_BUILD.azurecr.io/$APP_NAME
+          TAG=${{ steps.short.outputs.short_sha }}
+          echo "Construyendo imagen $IMAGE_NAME:$TAG"
+          docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest .
+          docker push $IMAGE_NAME:$TAG
+          docker push $IMAGE_NAME:latest
+
+  deploy-dev:
+    name: CD [dev]
+    environment: dev
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Establecer variables
+        run: |
+          ENV=dev
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "TAG=${{ needs.build.outputs.tag }}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP=rg-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "AKS_NAME=aks-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "ACR_NAME=acr${PROJECT}${ENV}eastus2${INSTANCE}" >> $GITHUB_ENV
+
+      - name: AKS Credentials
+        run: |
+          az aks get-credentials \
+            --resource-group $RESOURCE_GROUP \
+            --name $AKS_NAME \
+            --overwrite-existing
+
+      - name: Deploy a AKS
+        run: |
+          export IMAGE=$ACR_NAME.azurecr.io/$APP_NAME:$TAG
+          echo ">>> Desplegando $IMAGE en $AKS_NAME"
+          envsubst '${IMAGE} ${ENV}' < k8s.yml > k8s-$ENV.yml
+          cat k8s-$ENV.yml
+          kubectl apply -f k8s-$ENV.yml
+          kubectl rollout status deployment/$APP_NAME -n mesa-partes --timeout=420s
+
+      - name: Imprimir IP pública del frontend
+        run: |
+          LB_IP=""
+          for i in $(seq 1 12); do
+            LB_IP=$(kubectl get svc $APP_NAME -n mesa-partes -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            [ -n "$LB_IP" ] && break
+            echo "Intento $i/12: IP aun no asignada, esperando 10s..."
+            sleep 10
+          done
+          echo ">>> Frontend ($ENV): http://$LB_IP"
+
+  approval-stg:
+    needs: [deploy-dev]
+    environment:
+      name: approval-stg
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aprobar
+        run: echo "Esperando aprobación"
+
+  deploy-stg:
+    name: CD [stg]
+    environment: stg
+    needs: [build, approval-stg]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Establecer variables
+        run: |
+          ENV=stg
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "TAG=${{ needs.build.outputs.tag }}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP=rg-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "AKS_NAME=aks-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "ACR_NAME=acr${PROJECT}${ENV}eastus2${INSTANCE}" >> $GITHUB_ENV
+
+      - name: Promover imagen desde el ACR de dev
+        # Reutiliza la imagen construida en dev
+        run: |
+          az acr import \
+            --name $ACR_NAME \
+            --source $ACR_BUILD.azurecr.io/$APP_NAME:$TAG \
+            --image $APP_NAME:$TAG \
+            --force
+
+      - name: AKS Credentials
+        run: |
+          az aks get-credentials \
+            --resource-group $RESOURCE_GROUP \
+            --name $AKS_NAME \
+            --overwrite-existing
+
+      - name: Deploy a AKS
+        run: |
+          export IMAGE=$ACR_NAME.azurecr.io/$APP_NAME:$TAG
+          echo ">>> Desplegando $IMAGE en $AKS_NAME"
+          envsubst '${IMAGE} ${ENV}' < k8s.yml > k8s-$ENV.yml
+          cat k8s-$ENV.yml
+          kubectl apply -f k8s-$ENV.yml
+          kubectl rollout status deployment/$APP_NAME -n mesa-partes --timeout=420s
+
+      - name: Imprimir IP pública del frontend
+        run: |
+          LB_IP=""
+          for i in $(seq 1 12); do
+            LB_IP=$(kubectl get svc $APP_NAME -n mesa-partes -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            [ -n "$LB_IP" ] && break
+            echo "Intento $i/12: IP aun no asignada, esperando 10s..."
+            sleep 10
+          done
+          echo ">>> Frontend ($ENV): http://$LB_IP"
+
+  approval-prd:
+    needs: [deploy-stg]
+    environment:
+      name: approval-prd
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aprobar
+        run: echo "Esperando aprobación"
+
+  deploy-prd:
+    name: CD [prd]
+    environment: prd
+    needs: [build, approval-prd]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Establecer variables
+        run: |
+          ENV=prd
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "TAG=${{ needs.build.outputs.tag }}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP=rg-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "AKS_NAME=aks-$PROJECT-$ENV-eastus2-$INSTANCE" >> $GITHUB_ENV
+          echo "ACR_NAME=acr${PROJECT}${ENV}eastus2${INSTANCE}" >> $GITHUB_ENV
+
+      - name: Promover imagen desde el ACR de dev
+        # Reutiliza la imagen construida en dev
+        run: |
+          az acr import \
+            --name $ACR_NAME \
+            --source $ACR_BUILD.azurecr.io/$APP_NAME:$TAG \
+            --image $APP_NAME:$TAG \
+            --force
+
+      - name: AKS Credentials
+        run: |
+          az aks get-credentials \
+            --resource-group $RESOURCE_GROUP \
+            --name $AKS_NAME \
+            --overwrite-existing
+
+      - name: Deploy a AKS
+        run: |
+          export IMAGE=$ACR_NAME.azurecr.io/$APP_NAME:$TAG
+          echo ">>> Desplegando $IMAGE en $AKS_NAME"
+          envsubst '${IMAGE} ${ENV}' < k8s.yml > k8s-$ENV.yml
+          cat k8s-$ENV.yml
+          kubectl apply -f k8s-$ENV.yml
+          kubectl rollout status deployment/$APP_NAME -n mesa-partes --timeout=420s
+
+      - name: Imprimir IP pública del frontend
+        run: |
+          LB_IP=""
+          for i in $(seq 1 12); do
+            LB_IP=$(kubectl get svc $APP_NAME -n mesa-partes -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            [ -n "$LB_IP" ] && break
+            echo "Intento $i/12: IP aun no asignada, esperando 10s..."
+            sleep 10
+          done
+          echo ">>> Frontend ($ENV): http://$LB_IP"
